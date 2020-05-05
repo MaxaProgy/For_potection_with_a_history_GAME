@@ -40,5 +40,10 @@ RATE_PLAYER_SPEED = 3
 
 COUNT_SHOOTING = 50
 COUNT_ENEMY = 10
-window = pygame.display.set_mode(DISPLAYMODE)
 
+# Шрифты
+pygame.init()
+window = pygame.display.set_mode(DISPLAYMODE)
+TEXTCOLOR = (255, 255, 255)
+font_1 = pygame.font.SysFont("Impact", 22)
+font_2 = pygame.font.SysFont("Impact", 15)

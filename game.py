@@ -1,4 +1,6 @@
 # coding=utf-8
+import time
+
 from sprites import *
 from os import *
 import sys
@@ -111,8 +113,14 @@ class Game(object):
 
     def run(self):
         delay_shooting, fps_shooting = 0, 0
+        time_elapsed = time.clock()
 
         while True:
+            if not time.clock():
+                start_time = time.perf_counter()
+            else:
+                start_time = time.clock()
+
             energy = INIT_ENERGY
             try:
                 enemy.kill()
@@ -129,6 +137,16 @@ class Game(object):
             check_on_press_keys = True
             count_shooting = COUNT_SHOOTING
 
+            # Меню игрока
+            score_box = TextBox("Счёт: {}".format(kill_enemy), font_1, 10, 10)
+            time_box = TextBox("Время: {0:.2f}".format(start_time), font_1, 10, 50)
+            text_info = TextBox("   Нажмите:", font_2, 10, WINDOW_HEIGHT - 160)
+            text_esc = TextBox("+ ESC - Выход из игры", font_2, 10, WINDOW_HEIGHT - 120)
+            text_f1 = TextBox("+ F1 - Информация о сражении", font_2, 10, WINDOW_HEIGHT - 80)
+            text_p = TextBox("+ P - Пауза, с инфомацией сражения", font_2, 10, WINDOW_HEIGHT - 40)
+
+            group_box = pygame.sprite.RenderUpdates(score_box, time_box, text_esc, text_info,text_f1, text_p)
+
             while True:
                 window.blit(background_game, (0, 0))
                 if check_on_press_keys:
@@ -140,11 +158,11 @@ class Game(object):
                                 show_info()
                             if event.key == pygame.K_p:
                                 pause_game()
+                                start_time = time.clock() - time_elapsed
                             if event.key == pygame.K_SPACE:
                                 delay_shooting = 9
                         elif event.type == pygame.KEYUP:
                             player.y_speed = 0
-
 
                     key_pressed = pygame.key.get_pressed()
                     if key_pressed[pygame.K_UP] or key_pressed[pygame.K_w]:
@@ -167,10 +185,19 @@ class Game(object):
                 if len(enemy_team) < MAX_NUMBER_ENEMY:
                     if random.randint(0, 50) == 0:
                         enemy_team.add(Enemy())
+
                 if energy <= 0 and check_on_press_keys:
                     check_on_press_keys = False
                     group_explosion.add(Explosion(player.rect))
                     player.kill()
+
+                # Считаем время
+                if not time.clock():
+                    time_current = time.perf_counter()
+                else:
+                    time_current = time.clock()
+                # Устонавливаем конечное время
+                time_elapsed = time_current - start_time
 
                 check = False
                 for enemy in enemy_team:
@@ -202,6 +229,7 @@ class Game(object):
                 group_shooting_player.update()
                 group_explosion.update()
                 group_shooting_enemy.update()
+                group_box.update()
 
                 # =======================
                 # ОЧИЩАЕМ СПРАЙТЫ
@@ -212,12 +240,18 @@ class Game(object):
                 group_shooting_player.clear(window, background_game)
                 group_explosion.clear(window, background_game)
                 group_shooting_enemy.clear(window, background_game)
+                group_box.clear(window, background_game)
 
                 enemy_team.draw(window)
                 player_team.draw(window)
                 group_shooting_player.draw(window)
                 group_explosion.draw(window)
                 group_shooting_enemy.draw(window)
+                group_box.draw(window)
+
+                # Вносим новые значения в меню игрока
+                score_box.text = "Счёт: {}".format(kill_enemy)
+                time_box.text = "Время: %.2f" % time_elapsed
 
                 if energy < 0:
                     energy = 0
