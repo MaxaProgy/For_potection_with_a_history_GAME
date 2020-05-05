@@ -59,9 +59,10 @@ def show_help():
 def update_sprites():
     player = Player()  # Настраиваем игрока
     player_team = pygame.sprite.RenderUpdates(player)
+    group_shooting_player = pygame.sprite.RenderUpdates()
     enemy = Enemy()  # Настраиваем игрока
     enemy_team = pygame.sprite.RenderUpdates()
-    return enemy, enemy_team, player, player_team
+    return enemy, enemy_team, player, player_team, group_shooting_player
 
 
 def new_game():
@@ -80,7 +81,7 @@ class Game(object):
 
     def run(self):
         while True:
-            enemy, enemy_team, player, player_team = update_sprites()
+            enemy, enemy_team, player, player_team, group_shooting_player = update_sprites()
             background_game = load_image(path.join('static', 'img', 'level_1', 'background', 'background_1.jpg'),
                                          True, DISPLAYMODE)
 
@@ -96,7 +97,6 @@ class Game(object):
                                 show_help()
                             if event.key == pygame.K_p:
                                 pause_game()
-
                         elif event.type == pygame.KEYUP:
                             player.y_speed = 0
 
@@ -105,6 +105,8 @@ class Game(object):
                         player.y_speed = -RATE_PLAYER_SPEED
                     if key_pressed[pygame.K_DOWN] or key_pressed[pygame.K_s]:
                         player.y_speed = RATE_PLAYER_SPEED
+                    if key_pressed[pygame.K_SPACE]:
+                        group_shooting_player.add(PlayerShooting(player.rect.midtop))
 
                 if len(enemy_team) <= MAX_NUMBER_ENEMY:
                     enemy_team.add(Enemy())
@@ -115,6 +117,7 @@ class Game(object):
 
                 enemy_team.update()
                 player_team.update()
+                group_shooting_player.update()
 
                 # =======================
                 # ОЧИЩАЕМ СПРАЙТЫ
@@ -124,6 +127,8 @@ class Game(object):
                 enemy_team.draw(window)
                 player_team.clear(window, background_game)
                 player_team.draw(window)
+                group_shooting_player.clear(window, background_game)
+                group_shooting_player.draw(window)
                 pygame.display.update()
                 self.time.tick(FPS)
 
