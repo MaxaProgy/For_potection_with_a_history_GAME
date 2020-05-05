@@ -17,7 +17,7 @@ class Player(pygame.sprite.Sprite):
         self.speed_image = 0
         for i in range(2):  # Загружаем картинки
             path_img = os.path.join('static', 'img', 'level_1', 'player',  "player_" + str(i + 1) + '.png')
-            self.list_player_img.append(load_image(path_img, False, (LENGTH_PLAYER, WIDTH_PLAYER)))
+            self.list_player_img.append(load_image(path_img, False, (WIDTH_PLAYER, LENGTH_PLAYER)))
 
         self.image = self.list_player_img[self.index]
         self.rect = self.image.get_rect()
@@ -54,9 +54,12 @@ class Enemy(pygame.sprite.Sprite):
         self.list_enemy_img = []
         self.index = -1
         self.speed_image = 0
-        for i in range(9):  # Загружаем картинки
+        for i in range(17):  # Загружаем картинки
             path_img = os.path.join('static', 'img', 'level_1', 'new_enemy',  "enemy_" + str(i + 1) + '.png')
-            self.list_enemy_img.append(load_image(path_img, False, (LENGTH_ENEMY, WIDTH_ENEMY)))
+            if i < 10:
+                self.list_enemy_img.append(load_image(path_img, False, (WIDTH_ENEMY, LENGTH_ENEMY)))
+            else:
+                self.list_enemy_img.append(load_image(path_img, False, (WIDTH_ENEMY_SHOOTING, LENGTH_ENEMY_SHOOTING)))
 
         self.image = self.list_enemy_img[self.index]
         self.rect = self.image.get_rect()
@@ -72,6 +75,8 @@ class Enemy(pygame.sprite.Sprite):
             self.index += 1
             self.x_speed = -RATE_ENEMY_SPEED
             self.speed_image = 0
+            if self.index == 15:  # Дроид стреляет, только если разрешено
+                group_shooting_enemy.add(EnemyShooting(self.rect.midbottom))
             if self.index < len(self.list_enemy_img):  # Отображаем изображение
                 self.image = self.list_enemy_img[self.index]
             else:
@@ -80,6 +85,8 @@ class Enemy(pygame.sprite.Sprite):
 
         if self.rect.left <= 190 or self.rect.right >= WINDOW_WIDTH:
             self.x_speed = -self.x_speed
+
+
 
 
 # =========================
@@ -95,7 +102,7 @@ class PlayerShooting(pygame.sprite.Sprite):
         self.speed_image = 0
         for i in range(4):  # Загружаем картинки
             path_img = os.path.join('static', 'img', 'level_1', 'player_shooting',  "shooting_" + str(i + 1) + '.png')
-            self.list_shooting_img.append(load_image(path_img, False, (LENGTH_SHOOTING, WIDTH_SHOOTING)))
+            self.list_shooting_img.append(load_image(path_img, False, (WIDTH_SHOOTING, LENGTH_SHOOTING)))
 
         self.image = self.list_shooting_img[self.index]
         self.rect = self.image.get_rect()
@@ -128,13 +135,13 @@ class Explosion(pygame.sprite.Sprite):
         self.index = -1
         self.speed_image = 0
         quantity_image = 7  # Количество изображений, содержащихся в анимации
-        self.sp_image_explosion = []
+        self.list_explosion_img = []
 
         for i in range(0, quantity_image):  # Загружаем картинки
             path_img = os.path.join('static', 'img', 'animation', type_explosion + str(i + 1) + '.png')
-            self.sp_image_explosion.append(load_image(path_img, False, (LENGTH_EXPLOSION, WIDTH_EXPLOSION)))
+            self.list_explosion_img.append(load_image(path_img, False, (WIDTH_EXPLOSION, LENGTH_EXPLOSION)))
 
-        self.image = self.sp_image_explosion[self.index]
+        self.image = self.list_explosion_img[self.index]
         self.rect = self.image.get_rect()
         self.rect.x = object_rect.x
         self.rect.y = object_rect.y
@@ -144,7 +151,44 @@ class Explosion(pygame.sprite.Sprite):
         if self.speed_image >= DELAY_EXPLOSION:  # Меняем изображение каждые 4 кадра
             self.index += 1
             self.speed_image = 0
-            if self.index < len(self.sp_image_explosion):  # Отображаем изображение
-                self.image = self.sp_image_explosion[self.index]
+            if self.index < len(self.list_explosion_img):  # Отображаем изображение
+                self.image = self.list_explosion_img[self.index]
             else:  # Или удаляем объект
                 self.kill()
+
+
+# =========================
+# СПРАЙТ СТРЕЛЬБЫ ВРАГА
+# =========================
+
+
+class EnemyShooting(pygame.sprite.Sprite):
+    def __init__(self, p):
+        pygame.sprite.Sprite.__init__(self)
+        self.list_shooting_img = []
+        self.index = -1
+        self.speed_image = 0
+        for i in range(2):  # Загружаем картинки
+            path_img = os.path.join('static', 'img', 'level_1', 'enemy_shooting',  "shooting_" + str(i + 1) + '.png')
+            self.list_shooting_img.append(load_image(path_img, False, (WIDTH_SHOOTING_ENEMY, LENGTH_SHOOTING_ENEMY)))
+
+        self.image = self.list_shooting_img[self.index]
+        self.rect = self.image.get_rect()
+        self.rect.center = (p[0] - 15, p[1] - 42)
+
+    def update(self):
+        self.speed_image += 1  # Обновляем значение, чтобы изменить изображение
+        if self.speed_image >= DELAY_EXPLOSION:  # Меняем изображение каждые 4 кадра
+            self.index += 1
+            self.speed_image = 0
+            if self.index < len(self.list_shooting_img):  # Отображаем изображение
+                self.image = self.list_shooting_img[self.index]
+            else:
+                self.index = -1
+        if self.rect.bottom >= WINDOW_HEIGHT:
+            self.kill()
+        else:
+            self.rect.move_ip((-5, 0))
+
+
+group_shooting_enemy = pygame.sprite.RenderUpdates()

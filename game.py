@@ -5,6 +5,22 @@ import sys
 from image import load_image
 
 
+def lost_game():
+    img = load_image(path.join('static', 'img', 'background', 'game_lost.jpg'), True, DISPLAYMODE)
+    window.blit(img, (0, 0))
+    pygame.display.update()
+    wait_for_keystroke()
+    new_game()
+
+
+def won_game():
+    img = load_image(path.join('static', 'img', 'background', 'game_won.jpg'), True, DISPLAYMODE)
+    window.blit(img, (0, 0))
+    pygame.display.update()
+    wait_for_keystroke()
+    new_game()
+
+
 def exit_game():
     pygame.quit()
     sys.exit()
@@ -81,11 +97,13 @@ class Game(object):
 
     def run(self):
         while True:
+            energy = INIT_ENERGY
             enemy, enemy_team, player, player_team, group_shooting_player = update_sprites()
             background_game = load_image(path.join('static', 'img', 'level_1', 'background', 'background_1.jpg'),
                                          True, DISPLAYMODE)
 
             group_explosion = pygame.sprite.RenderUpdates()
+            kill_enemy = 0
             check_on_press_keys = True
             while True:
                 window.blit(background_game, (0, 0))
@@ -111,14 +129,25 @@ class Game(object):
 
                 if len(enemy_team) <= MAX_NUMBER_ENEMY:
                     enemy_team.add(Enemy())
+                if energy <= 0 and check_on_press_keys:
+                    check_on_press_keys = False  # Чтобы отключить ввод нажатий клавиш
+                    group_explosion.add(Explosion(player.rect))
+                    player.kill()
+                    lost_game()
 
                 # =========================
                 # СПРАЙТ СТОЛКНОВЕНИЯ
                 # =========================
 
+                for player in pygame.sprite.groupcollide(player_team, group_shooting_enemy, False, True):
+                    energy -= 15
+
+
                 for enemy in pygame.sprite.groupcollide(enemy_team, group_shooting_player, True, True):
                     group_explosion.add(Explosion(enemy.rect, "explosion"))  # Исчезает во взрыве
-
+                    kill_enemy += 1
+                    if kill_enemy >= COUNT_ENEMY:
+                        won_game()
                 # =============================
                 # ОБНОВЛЯЕМ ВСЕ ГРУППЫ
                 # =============================
@@ -127,6 +156,7 @@ class Game(object):
                 player_team.update()
                 group_shooting_player.update()
                 group_explosion.update()
+                group_shooting_enemy.update()
 
                 # =======================
                 # ОЧИЩАЕМ СПРАЙТЫ
@@ -140,8 +170,10 @@ class Game(object):
                 group_shooting_player.draw(window)
                 group_explosion.clear(window, background_game)
                 group_explosion.draw(window)
+                group_shooting_enemy.clear(window, background_game)
+                group_shooting_enemy.draw(window)
+
                 pygame.display.update()
                 self.time.tick(FPS)
-
             pygame.time.delay(time_lapse)
             wait_for_keystroke()
