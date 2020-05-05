@@ -3,13 +3,13 @@ from game import Game
 
 
 def main():  # Функция вызова игры(главный файл)
-    game = TankWars()
+    game = ForPprotectionWithAHistory()
     game.run()
 
 
-class TankWars(Game):
+class ForPprotectionWithAHistory(Game):
     def __init__(self):
-        super(TankWars, self).__init__()
+        super(ForPprotectionWithAHistory, self).__init__()
 
 
 if __name__ == '__main__':
