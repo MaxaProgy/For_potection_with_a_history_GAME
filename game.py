@@ -56,10 +56,12 @@ def show_help():
     wait_for_keystroke()
 
 
-def update_enemy():
+def update_sprites():
+    player = Player()  # Настраиваем игрока
+    player_team = pygame.sprite.RenderUpdates(player)
     enemy = Enemy()  # Настраиваем игрока
     enemy_team = pygame.sprite.RenderUpdates()
-    return enemy, enemy_team
+    return enemy, enemy_team, player, player_team
 
 
 def new_game():
@@ -78,12 +80,11 @@ class Game(object):
 
     def run(self):
         while True:
-            enemy, enemy_team = update_enemy()
+            enemy, enemy_team, player, player_team = update_sprites()
             background_game = load_image(path.join('static', 'img', 'level_1', 'background', 'background_1.jpg'),
                                          True, DISPLAYMODE)
 
             check_on_press_keys = True
-            enemy_creation_period = 2
             while True:
                 window.blit(background_game, (0, 0))
                 if check_on_press_keys:
@@ -96,6 +97,15 @@ class Game(object):
                             if event.key == pygame.K_p:
                                 pause_game()
 
+                        elif event.type == pygame.KEYUP:
+                            player.y_speed = 0
+
+                    key_pressed = pygame.key.get_pressed()
+                    if key_pressed[pygame.K_UP] or key_pressed[pygame.K_w]:
+                        player.y_speed = -RATE_PLAYER_SPEED
+                    if key_pressed[pygame.K_DOWN] or key_pressed[pygame.K_s]:
+                        player.y_speed = RATE_PLAYER_SPEED
+
                 if len(enemy_team) <= MAX_NUMBER_ENEMY:
                     enemy_team.add(Enemy())
 
@@ -104,6 +114,7 @@ class Game(object):
                 # =============================
 
                 enemy_team.update()
+                player_team.update()
 
                 # =======================
                 # ОЧИЩАЕМ СПРАЙТЫ
@@ -111,7 +122,8 @@ class Game(object):
 
                 enemy_team.clear(window, background_game)
                 enemy_team.draw(window)
-
+                player_team.clear(window, background_game)
+                player_team.draw(window)
                 pygame.display.update()
                 self.time.tick(FPS)
 

@@ -9,6 +9,42 @@ import random
 # =========================
 
 
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.list_spaceship = []
+        self.index = -1
+        self.speed_image = 0
+        for i in range(2):  # Загружаем картинки
+            path_img = os.path.join('static', 'img', 'level_1', 'player',  "player_" + str(i + 1) + '.png')
+            self.list_spaceship.append(load_image(path_img, False, (LENGTH_PLAYER, WIDTH_PLAYER)))
+
+        self.image = self.list_spaceship[self.index]
+        self.rect = self.image.get_rect()
+        self.rect.center = (170, WINDOW_HEIGHT // 2)
+        self.y_speed = 0  # Перемещение по y
+
+        if self.y_speed == 0:
+            self.y_speed = 1
+
+    def update(self):
+        self.speed_image += 1  # Обновляем значение, чтобы изменить изображение
+        if self.speed_image >= DELAY_EXPLOSION:  # Меняем изображение каждые 4 кадра
+            self.index += 1
+            self.speed_image = 0
+            if self.index < len(self.list_spaceship):  # Отображаем изображение
+                self.image = self.list_spaceship[self.index]
+            else:
+                self.index = -1
+
+        self.rect.move_ip((0, self.y_speed))
+
+
+# =========================
+# СПРАЙТ ВРАГА
+# =========================
+
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -26,8 +62,6 @@ class Enemy(pygame.sprite.Sprite):
         self.x_speed = 0  # Перемещение по x
         if self.x_speed == 0:
             self.x_speed = 1
-        elif self.y_speed == 0:
-            self.y_speed = 1
 
     def update(self):
         self.speed_image += 1  # Обновляем значение, чтобы изменить изображение
