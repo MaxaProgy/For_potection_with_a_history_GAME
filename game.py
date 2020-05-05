@@ -5,6 +5,19 @@ import sys
 from image import load_image
 
 
+def show_energy_bar(energy):
+    color = 2.55 * energy
+
+    color_rgb = (255 - color, color, 0)
+    pygame.draw.rect(window, (0, 0, 0), (WINDOW_WIDTH - 35, WINDOW_HEIGHT - 25, 30, -110))
+    pygame.draw.rect(window, color_rgb, (WINDOW_WIDTH - 30, WINDOW_HEIGHT - 30, 20, -1 * energy))
+
+    for i in range(10):
+        pygame.draw.rect(window, (0, 0, 0), (WINDOW_WIDTH - 30, WINDOW_HEIGHT - 30, 20, -10 * (i + 1)), 2)
+
+    pygame.draw.rect(window, (255, 255, 255), (WINDOW_WIDTH - 35, WINDOW_HEIGHT - 25, 30, -110), 2)
+
+
 def lost_game():
     img = load_image(path.join('static', 'img', 'background', 'game_lost.jpg'), True, DISPLAYMODE)
     show_image(img)
@@ -21,6 +34,9 @@ def exit_game():
 
 
 def pause_game():
+    img = load_image(path.join('static', 'img', 'level_1', 'background', 'background_help.jpg'), True, DISPLAYMODE)
+    window.blit(img, (0, 0))
+
     pause = True
     while pause:
         for event in pygame.event.get():
@@ -165,6 +181,10 @@ class Game(object):
                 group_shooting_player.draw(window)
                 group_explosion.draw(window)
                 group_shooting_enemy.draw(window)
+
+                if energy < 0:
+                    energy = 0
+                show_energy_bar(energy)
 
                 pygame.display.update()
                 self.time.tick(FPS)
