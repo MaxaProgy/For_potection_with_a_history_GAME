@@ -1,0 +1,19 @@
+# coding=utf-8
+import pygame
+import os
+# Файл констант
+
+
+LENGTH_ENEMY = 32
+WIDTH_ENEMY = 64
+WINDOW_WIDTH = 1200
+WINDOW_HEIGHT = 750
+DISPLAYMODE = (WINDOW_WIDTH, WINDOW_HEIGHT)
+FPS = 40
+RATE_ENEMY_SPEED = 2
+DELAY_EXPLOSION = 5
+MAX_NUMBER_ENEMY = 5
+
+
+window = pygame.display.set_mode(DISPLAYMODE)
+
