@@ -115,3 +115,36 @@ class PlayerShooting(pygame.sprite.Sprite):
             self.rect.move_ip((5, 0))
         else:
             self.kill()
+
+
+# =========================
+# СПРАЙТ ВЗРЫВА
+# =========================
+
+
+class Explosion(pygame.sprite.Sprite):
+    def __init__(self, object_rect, type_explosion="explosion"):
+        pygame.sprite.Sprite.__init__(self)
+        self.index = -1
+        self.speed_image = 0
+        quantity_image = 7  # Количество изображений, содержащихся в анимации
+        self.sp_image_explosion = []
+
+        for i in range(0, quantity_image):  # Загружаем картинки
+            path_img = os.path.join('static', 'img', 'animation', type_explosion + str(i + 1) + '.png')
+            self.sp_image_explosion.append(load_image(path_img, False, (LENGTH_EXPLOSION, WIDTH_EXPLOSION)))
+
+        self.image = self.sp_image_explosion[self.index]
+        self.rect = self.image.get_rect()
+        self.rect.x = object_rect.x
+        self.rect.y = object_rect.y
+
+    def update(self):
+        self.speed_image += 1  # Обновляем значение, чтобы изменить изображение
+        if self.speed_image >= DELAY_EXPLOSION:  # Меняем изображение каждые 4 кадра
+            self.index += 1
+            self.speed_image = 0
+            if self.index < len(self.sp_image_explosion):  # Отображаем изображение
+                self.image = self.sp_image_explosion[self.index]
+            else:  # Или удаляем объект
+                self.kill()

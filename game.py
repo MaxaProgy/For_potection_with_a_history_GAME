@@ -85,6 +85,7 @@ class Game(object):
             background_game = load_image(path.join('static', 'img', 'level_1', 'background', 'background_1.jpg'),
                                          True, DISPLAYMODE)
 
+            group_explosion = pygame.sprite.RenderUpdates()
             check_on_press_keys = True
             while True:
                 window.blit(background_game, (0, 0))
@@ -111,6 +112,13 @@ class Game(object):
                 if len(enemy_team) <= MAX_NUMBER_ENEMY:
                     enemy_team.add(Enemy())
 
+                # =========================
+                # СПРАЙТ СТОЛКНОВЕНИЯ
+                # =========================
+
+                for enemy in pygame.sprite.groupcollide(enemy_team, group_shooting_player, True, True):
+                    group_explosion.add(Explosion(enemy.rect, "explosion"))  # Исчезает во взрыве
+
                 # =============================
                 # ОБНОВЛЯЕМ ВСЕ ГРУППЫ
                 # =============================
@@ -118,6 +126,7 @@ class Game(object):
                 enemy_team.update()
                 player_team.update()
                 group_shooting_player.update()
+                group_explosion.update()
 
                 # =======================
                 # ОЧИЩАЕМ СПРАЙТЫ
@@ -129,6 +138,8 @@ class Game(object):
                 player_team.draw(window)
                 group_shooting_player.clear(window, background_game)
                 group_shooting_player.draw(window)
+                group_explosion.clear(window, background_game)
+                group_explosion.draw(window)
                 pygame.display.update()
                 self.time.tick(FPS)
 
