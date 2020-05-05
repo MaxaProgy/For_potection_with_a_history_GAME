@@ -18,6 +18,19 @@ def show_energy_bar(energy):
     pygame.draw.rect(window, (255, 255, 255), (WINDOW_WIDTH - 35, WINDOW_HEIGHT - 25, 30, -110), 2)
 
 
+def show_shooting_bar(shooting):  # Шкала лазеров
+    color = 5.1 * shooting
+
+    color_rgb = (255 - color, color, 0)
+    pygame.draw.rect(window, (0, 0, 0), (WINDOW_WIDTH - 35, WINDOW_HEIGHT - 135, 30, -110))
+    pygame.draw.rect(window, color_rgb, (WINDOW_WIDTH - 30, WINDOW_HEIGHT - 140, 20, -1 * shooting * 2))
+
+    for i in range(10):
+        pygame.draw.rect(window, (0, 0, 0), (WINDOW_WIDTH - 30, WINDOW_HEIGHT - 140, 20, -10 * (i + 1)), 2)
+
+    pygame.draw.rect(window, (255, 255, 255), (WINDOW_WIDTH - 35, WINDOW_HEIGHT - 135, 30, -110), 2)
+
+
 def lost_game():
     img = load_image(path.join('static', 'img', 'background', 'game_lost.jpg'), True, DISPLAYMODE)
     show_image(img)
@@ -58,7 +71,7 @@ def wait_for_keystroke_menu():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     exit_game()
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_BACKSPACE:
                     return
 
 
@@ -97,8 +110,16 @@ class Game(object):
         self.time = pygame.time.Clock()
 
     def run(self):
+        delay_shooting, fps_shooting = 0, 0
+
         while True:
             energy = INIT_ENERGY
+            try:
+                enemy.kill()
+                player.kill()
+            except Exception:
+                pass
+
             enemy, enemy_team, player, player_team, group_shooting_player = update_sprites()
             background_game = load_image(path.join('static', 'img', 'level_1', 'background', 'background_1.jpg'),
                                          True, DISPLAYMODE)
@@ -106,6 +127,7 @@ class Game(object):
             group_explosion = pygame.sprite.RenderUpdates()
             kill_enemy = 0
             check_on_press_keys = True
+            count_shooting = COUNT_SHOOTING
 
             while True:
                 window.blit(background_game, (0, 0))
@@ -118,8 +140,11 @@ class Game(object):
                                 show_info()
                             if event.key == pygame.K_p:
                                 pause_game()
+                            if event.key == pygame.K_SPACE:
+                                delay_shooting = 9
                         elif event.type == pygame.KEYUP:
                             player.y_speed = 0
+
 
                     key_pressed = pygame.key.get_pressed()
                     if key_pressed[pygame.K_UP] or key_pressed[pygame.K_w]:
@@ -127,15 +152,33 @@ class Game(object):
                     if key_pressed[pygame.K_DOWN] or key_pressed[pygame.K_s]:
                         player.y_speed = RATE_PLAYER_SPEED
                     if key_pressed[pygame.K_SPACE]:
-                        group_shooting_player.add(PlayerShooting(player.rect.midtop))
+                        delay_shooting += 1
+                        fps_shooting = 0
+                        if delay_shooting == 10 and count_shooting - 1 > 0:
+                            group_shooting_player.add(PlayerShooting(player.rect.midtop))
+                            delay_shooting = 0
+                            count_shooting -= 1
+                    else:
+                        fps_shooting += 1
+                        if fps_shooting == 25 and count_shooting < COUNT_SHOOTING:
+                            count_shooting += 1
+                            fps_shooting = 0
 
-                if len(enemy_team) <= MAX_NUMBER_ENEMY:
-                    enemy_team.add(Enemy())
+                if len(enemy_team) < MAX_NUMBER_ENEMY:
+                    if random.randint(0, 50) == 0:
+                        enemy_team.add(Enemy())
                 if energy <= 0 and check_on_press_keys:
                     check_on_press_keys = False
                     group_explosion.add(Explosion(player.rect))
                     player.kill()
+
+                check = False
+                for enemy in enemy_team:
+                    if enemy.rect.right <= 0:
+                        check = True
+                if check:
                     lost_game()
+                    break
 
                 # =========================
                 # СПРАЙТ СТОЛКНОВЕНИЯ
@@ -153,12 +196,6 @@ class Game(object):
                 # =============================
                 # ОБНОВЛЯЕМ ВСЕ ГРУППЫ
                 # =============================
-                for enemy in enemy_team:
-                    if enemy.rect.right <= 0:
-                        check_on_press_keys = False
-                        group_explosion.add(Explosion(player.rect))
-                        player.kill()
-                        lost_game()
 
                 enemy_team.update()
                 player_team.update()
@@ -185,6 +222,7 @@ class Game(object):
                 if energy < 0:
                     energy = 0
                 show_energy_bar(energy)
-
+                show_shooting_bar(count_shooting)
                 pygame.display.update()
                 self.time.tick(FPS)
+            menu_new_game()
