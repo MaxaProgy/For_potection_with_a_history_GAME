@@ -180,4 +180,22 @@ class EnemyShooting(pygame.sprite.Sprite):
             self.rect.move_ip((-5, 0))
 
 
+# =========================
+# СПРАЙТ МЕНЮ ИГРОКА
+# =========================
+
+
+class TextBox(pygame.sprite.Sprite):
+    def __init__(self, text, font, pos_x, pos_y):
+        pygame.sprite.Sprite.__init__(self)
+        self.font = font
+        self.text = text
+        self.image = self.font.render(self.text, True, TEXTCOLOR)
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = pos_x, pos_y
+
+    def update(self):
+        self.image = self.font.render(self.text, True, TEXTCOLOR)
+
+
 group_shooting_enemy = pygame.sprite.RenderUpdates()
