@@ -260,6 +260,7 @@ class Game(object):
                     elif lvl == 3 and enemy.rect.right <= 250:
                         check = True
                 if check:
+                    kill_enemy = 0
                     explosion_player.play()
                     player.kill()
                     lost_game()
@@ -277,10 +278,11 @@ class Game(object):
                     explosion_enemy.play()
                     group_explosion.add(Explosion(enemy.rect))
                     kill_enemy += 1
-                    if kill_enemy >= COUNT_ENEMY:
+                    if kill_enemy >= COUNT_ENEMY * lvl:
                         enemy.kill()
                         for enemy in enemy_team:
                             enemy.kill()
+
                         won_game(score_top, kill_enemy)
                         background_game = load_image(path.join('static', 'img',  f'level_{lvl}', 'background',
                                                                'background_1.jpg'),
