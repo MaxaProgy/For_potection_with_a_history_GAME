@@ -82,6 +82,7 @@ class Enemy(pygame.sprite.Sprite):
 
             if self.index == 15:
                 group_shooting_enemy.add(EnemyShooting(self.rect.midbottom, self.lvl))
+                shooting_enemy.play()
             if self.index < len(self.list_enemy_img):
                 self.image = self.list_enemy_img[self.index]
             else:

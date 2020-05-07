@@ -38,11 +38,13 @@ def show_shooting_bar(shooting):  # Шкала лазеров
 
 
 def lost_game():
+    intro_sound.play()
     img = load_image(path.join('static', 'img', 'background', 'game_lost.jpg'), True, DISPLAYMODE)
     show_image(img)
 
 
 def won_game(score_top, kill_enemy):
+    intro_sound.play()
     global lvl
     if lvl < 8:
         lvl += 1
@@ -118,8 +120,11 @@ def update_sprites():
 
 
 def menu_new_game():
+    pygame.mixer.init(frequency=22050, size=-16, channels=8, buffer=4096)
+    music_channel.play(intro_sound, loops=-1, maxtime=0, fade_ms=0)
     img = load_image(path.join('static', 'img', 'background', 'background.jpg'), True, DISPLAYMODE)
     show_image(img)
+    music_channel.stop()
 
 
 def new_data(lvl, score_top, kill_enemy):
@@ -221,6 +226,7 @@ class Game(object):
                         delay_shooting += 1
                         fps_shooting = 0
                         if delay_shooting == 10 and count_shooting - 1 > 0:
+                            shooting_player.play()
                             group_shooting_player.add(PlayerShooting(player.rect.midtop, lvl))
                             delay_shooting = 0
                             count_shooting -= 1
@@ -254,6 +260,7 @@ class Game(object):
                     elif lvl == 3 and enemy.rect.right <= 250:
                         check = True
                 if check:
+                    explosion_player.play()
                     player.kill()
                     lost_game()
                     break
@@ -263,9 +270,11 @@ class Game(object):
                 # =========================
 
                 for player in pygame.sprite.groupcollide(player_team, group_shooting_enemy, False, True):
-                    energy -= 15
+                    hit_player.play()
+                    energy -= 5
 
                 for enemy in pygame.sprite.groupcollide(enemy_team, group_shooting_player, True, True):
+                    explosion_enemy.play()
                     group_explosion.add(Explosion(enemy.rect))
                     kill_enemy += 1
                     if kill_enemy >= COUNT_ENEMY:

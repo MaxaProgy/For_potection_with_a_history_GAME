@@ -3,6 +3,12 @@ import pygame
 import os
 # Файл констант
 
+def load_sound(filename, sound_lvl=1.0):
+    path = os.path.join('static', 'sound', filename)
+    sound = pygame.mixer.Sound(path)
+    sound.set_volume(sound_lvl)  # Настройка громкости звука
+    return sound
+
 
 LENGTH_ENEMY = 52
 WIDTH_ENEMY = 35
@@ -39,7 +45,7 @@ MAX_NUMBER_ENEMY = 5
 RATE_PLAYER_SPEED = 3
 
 COUNT_SHOOTING = 50
-COUNT_ENEMY = 1
+COUNT_ENEMY = 10
 
 # Шрифты
 pygame.init()
@@ -50,3 +56,13 @@ font_2 = pygame.font.SysFont("Impact", 15)
 COLOR_INACTIVE = pygame.Color('lightskyblue3')
 COLOR_ACTIVE = pygame.Color('dodgerblue2')
 FONT = pygame.font.Font(None, 32)
+
+# Настроить звуки
+intro_sound = load_sound('intro.ogg', 0.3)
+explosion_enemy = load_sound('explosion_enemy.ogg', 0.3)
+shooting_player = load_sound("shooting_player.ogg", 0.3)
+shooting_enemy = load_sound('shooting_enemy.ogg', 0.3)
+explosion_player = load_sound("explosion_player.ogg", 0.3)
+hit_player = load_sound("explosion_player.ogg", 0.3)
+
+music_channel = pygame.mixer.Channel(4)
