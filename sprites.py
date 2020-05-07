@@ -11,10 +11,10 @@ import random
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, lvl):
         pygame.sprite.Sprite.__init__(self)
         self.list_player_img = [load_image(
-            os.path.join('static', 'img', 'level_1', 'player',  "player_" + str(i + 1) + '.png'),
+            os.path.join('static', 'img', 'player',  "player_" + str(i + 1) + '.png'),
             False, (WIDTH_PLAYER, LENGTH_PLAYER)) for i in range(2)]
 
         self.index, self.speed_image = -1, 0
@@ -49,17 +49,22 @@ class Player(pygame.sprite.Sprite):
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, lvl):
         pygame.sprite.Sprite.__init__(self)
         self.list_enemy_img = []
         self.index, self.speed_image = -1, 0
 
         for i in range(17):  # Загружаем картинки
-            path_img = os.path.join('static', 'img', 'level_1', 'new_enemy',  "enemy_" + str(i + 1) + '.png')
-            if i < 10:
-                self.list_enemy_img.append(load_image(path_img, False, (WIDTH_ENEMY, LENGTH_ENEMY)))
+            path_img = os.path.join('static', 'img',  f'level_{lvl}', 'new_enemy',  "enemy_" + str(i + 1) + '.png')
+            if lvl in [1, 5, 6, 8]:
+                if i < 10:
+                    self.list_enemy_img.append(load_image(path_img, False, (WIDTH_ENEMY, LENGTH_ENEMY)))
+                else:
+                    self.list_enemy_img.append(load_image(path_img, False,
+                                                          (WIDTH_ENEMY_SHOOTING, LENGTH_ENEMY_SHOOTING)))
             else:
-                self.list_enemy_img.append(load_image(path_img, False, (WIDTH_ENEMY_SHOOTING, LENGTH_ENEMY_SHOOTING)))
+                self.list_enemy_img.append(load_image(path_img, False,
+                                                      (WIDTH_ENEMY_SHOOTING, LENGTH_ENEMY_SHOOTING)))
 
         self.image = self.list_enemy_img[self.index]
 
@@ -67,6 +72,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.center = (WINDOW_WIDTH - WIDTH_ENEMY,
                             random.randint(LENGTH_ENEMY, WINDOW_HEIGHT - LENGTH_ENEMY - 100))
         self.x_speed = 1
+        self.lvl = lvl
 
     def update(self):
         self.speed_image += 1
@@ -75,7 +81,7 @@ class Enemy(pygame.sprite.Sprite):
             self.x_speed, self.speed_image = -RATE_ENEMY_SPEED, 0
 
             if self.index == 15:
-                group_shooting_enemy.add(EnemyShooting(self.rect.midbottom))
+                group_shooting_enemy.add(EnemyShooting(self.rect.midbottom, self.lvl))
             if self.index < len(self.list_enemy_img):
                 self.image = self.list_enemy_img[self.index]
             else:
@@ -92,10 +98,10 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class PlayerShooting(pygame.sprite.Sprite):
-    def __init__(self, p):
+    def __init__(self, p, lvl):
         pygame.sprite.Sprite.__init__(self)
         self.list_shooting_img = [load_image(
-            os.path.join('static', 'img', 'level_1', 'player_shooting',  "shooting_" + str(i + 1) + '.png'),
+            os.path.join('static', 'img', 'player_shooting',  "shooting_" + str(i + 1) + '.png'),
             False, (WIDTH_SHOOTING, LENGTH_SHOOTING)) for i in range(4)]
         self.index, self.speed_image = -1, 0
 
@@ -154,10 +160,10 @@ class Explosion(pygame.sprite.Sprite):
 
 
 class EnemyShooting(pygame.sprite.Sprite):
-    def __init__(self, p):
+    def __init__(self, p, lvl):
         pygame.sprite.Sprite.__init__(self)
         self.list_shooting_img = [load_image(
-            os.path.join('static', 'img', 'level_1', 'enemy_shooting',  "shooting_" + str(i + 1) + '.png'),
+            os.path.join('static', 'img',  f'level_{lvl}', 'enemy_shooting',  "shooting_" + str(i + 1) + '.png'),
                                   False, (WIDTH_SHOOTING_ENEMY, LENGTH_SHOOTING_ENEMY)) for i in range(2)]
         self.index, self.speed_image = -1, 0
 

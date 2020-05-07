@@ -39,7 +39,7 @@ MAX_NUMBER_ENEMY = 5
 RATE_PLAYER_SPEED = 3
 
 COUNT_SHOOTING = 50
-COUNT_ENEMY = 10
+COUNT_ENEMY = 1
 
 # Шрифты
 pygame.init()
@@ -47,3 +47,6 @@ window = pygame.display.set_mode(DISPLAYMODE)
 TEXTCOLOR = (255, 255, 255)
 font_1 = pygame.font.SysFont("Impact", 22)
 font_2 = pygame.font.SysFont("Impact", 15)
+COLOR_INACTIVE = pygame.Color('lightskyblue3')
+COLOR_ACTIVE = pygame.Color('dodgerblue2')
+FONT = pygame.font.Font(None, 32)
