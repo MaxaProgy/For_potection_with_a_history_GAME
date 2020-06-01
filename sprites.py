@@ -101,7 +101,9 @@ class Enemy(pygame.sprite.Sprite):
         # то сменяем изображение на следующее в списке
         if self.speed_image >= DELAY:
             self.index += 1  # Увеличиваем индекс изображения
-            self.x_speed, self.speed_image = -RATE_ENEMY_SPEED, 0  # Изменяем и обнуляем скорость смены изображения
+
+            # Меняем положение врага и обнуляем скорость смены изображения
+            self.x_speed, self.speed_image = -RATE_ENEMY_SPEED, 0
 
             if self.index == 15:  # Индекс равен 15, это значит, что у человечка кадр стельбы,
                 # поэтому мы стеляем на этом кадре

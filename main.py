@@ -1,15 +1,20 @@
 # coding=utf-8
+
+# //////////////////
+# ФАЙЛ ЗАПУСКА ИГРЫ
+# //////////////////
+
 from game import Game
 
 
-def main():  # Функция вызова игры(главный файл)
-    game = ForPprotectionWithAHistory()
+def main():  # Функция вызова игры (главный файл)
+    game = ForProtectionWithAHistory()
     game.run()
 
 
-class ForPprotectionWithAHistory(Game):
+class ForProtectionWithAHistory(Game):
     def __init__(self):
-        super(ForPprotectionWithAHistory, self).__init__()
+        super(ForProtectionWithAHistory, self).__init__()
 
 
 if __name__ == '__main__':
