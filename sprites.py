@@ -19,7 +19,7 @@ class Player(pygame.sprite.Sprite):
         # Функция загрузки изображений находится в image.py
         self.list_player_img = [load_image(
             os.path.join('static', 'img', 'player',  "player_" + str(i + 1) + '.png'),
-            False, (WIDTH_PLAYER, LENGTH_PLAYER)) for i in range(2)]
+            False, (WIDTH_PLAYER, LENGTH_PLAYER)) for i in range(COUNT_PLAYER)]
 
         # Индекс текущего изображения игрока и начальная скорость смены изображения
         self.index, self.speed_image = -1, 0
@@ -69,7 +69,7 @@ class Enemy(pygame.sprite.Sprite):
         # Индекс текущего изображения врага и начальная скорость смены изображения
         self.index, self.speed_image = -1, 0
 
-        for i in range(17):  # Загружаем картинки
+        for i in range(COUNT_ENEMY):  # Загружаем картинки
             path_img = os.path.join('static', 'img',  f'level_{lvl}', 'new_enemy',  "enemy_" + str(i + 1) + '.png')
             if lvl in [1, 5, 6, 8]:  # На 1, 5, 6, 8 уровне у нас враги человечки, для них размеры другие
                 if i < 10:  # До 10 изображения человечик шагает, следвательно размер изображения меньше
@@ -130,7 +130,7 @@ class PlayerShooting(pygame.sprite.Sprite):
         # Функция загрузки изображений находится в image.py
         self.list_shooting_img = [load_image(
             os.path.join('static', 'img', 'player_shooting',  "shooting_" + str(i + 1) + '.png'),
-            False, (WIDTH_SHOOTING, LENGTH_SHOOTING)) for i in range(4)]
+            False, (WIDTH_SHOOTING, LENGTH_SHOOTING)) for i in range(COUNT_SHOOTING_PLAYER)]
 
         # Индекс текущего изображения пули игрока и начальная скорость смены изображения
         self.index, self.speed_image = -1, 0
@@ -176,7 +176,7 @@ class Explosion(pygame.sprite.Sprite):
         # Функция загрузки изображений находится в image.py
         self.list_explosion_img = [load_image(
             os.path.join('static', 'img', 'animation', "explosion" + str(i + 1) + '.png'),
-            False, (WIDTH_EXPLOSION, LENGTH_EXPLOSION)) for i in range(4)]
+            False, (WIDTH_EXPLOSION, LENGTH_EXPLOSION)) for i in range(COUNT_EXPLOSION)]
 
         # Индекс текущего изображения взрыва и начальная скорость смены изображения
         self.index, self.speed_image = -1, 0
@@ -216,7 +216,7 @@ class EnemyShooting(pygame.sprite.Sprite):
         # Функция загрузки изображений находится в image.py
         self.list_shooting_img = [load_image(
             os.path.join('static', 'img',  f'level_{lvl}', 'enemy_shooting',  "shooting_" + str(i + 1) + '.png'),
-            False, (WIDTH_SHOOTING_ENEMY, LENGTH_SHOOTING_ENEMY)) for i in range(2)]
+            False, (WIDTH_SHOOTING_ENEMY, LENGTH_SHOOTING_ENEMY)) for i in range(COUNT_SHOOTING_ENEMY)]
 
         # Индекс текущего изображения пули врага и начальная скорость смены изображения
         self.index, self.speed_image = -1, 0

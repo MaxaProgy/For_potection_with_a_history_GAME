@@ -278,7 +278,7 @@ class Game(object):
                     explosion_enemy.play()
                     group_explosion.add(Explosion(enemy.rect))
                     kill_enemy += 1
-                    if kill_enemy >= COUNT_ENEMY * lvl:
+                    if kill_enemy >= COUNT_ENEMY_LVL * lvl:
                         enemy.kill()
                         for enemy in enemy_team:
                             enemy.kill()
