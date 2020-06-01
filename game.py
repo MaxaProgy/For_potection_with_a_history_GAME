@@ -109,7 +109,7 @@ def show_image(img):
 
 
 def update_sprites():
-    player = Player(lvl)
+    player = Player()
     player_team = pygame.sprite.RenderUpdates(player)
     group_shooting_player = pygame.sprite.RenderUpdates()
 
@@ -175,13 +175,13 @@ class Game(object):
             count_shooting = COUNT_SHOOTING
 
             # Меню игрока
-            score_box = TextBox("Счёт: {}".format(kill_enemy), font_1, 10, 10)
-            time_box = TextBox("Время: {0:.2f}".format(start_time), font_1, 10, 50)
-            lvl_box = TextBox("Уровень: {}".format(lvl), font_1, 10, 80)
-            text_info = TextBox("   Нажмите:", font_2, 10, WINDOW_HEIGHT - 160)
-            text_esc = TextBox("+ ESC - Выход из игры", font_2, 10, WINDOW_HEIGHT - 120)
-            text_f1 = TextBox("+ F2 - Справка", font_2, 10, WINDOW_HEIGHT - 80)
-            text_p = TextBox("+ P - Пауза, с инфомацией сражения", font_2, 10, WINDOW_HEIGHT - 40)
+            score_box = TextBox("Счёт: {}".format(kill_enemy), font_1, (10, 10))
+            time_box = TextBox("Время: {0:.2f}".format(start_time), font_1, (10, 50))
+            lvl_box = TextBox("Уровень: {}".format(lvl), font_1, (10, 80))
+            text_info = TextBox("   Нажмите:", font_2, (10, WINDOW_HEIGHT - 160))
+            text_esc = TextBox("+ ESC - Выход из игры", font_2, (10, WINDOW_HEIGHT - 120))
+            text_f1 = TextBox("+ F2 - Справка", font_2, (10, WINDOW_HEIGHT - 80))
+            text_p = TextBox("+ P - Пауза, с инфомацией сражения", font_2, (10, WINDOW_HEIGHT - 40))
 
             group_box = pygame.sprite.RenderUpdates(score_box, lvl_box, time_box, text_esc, text_info, text_f1, text_p)
 
@@ -227,7 +227,7 @@ class Game(object):
                         fps_shooting = 0
                         if delay_shooting == 10 and count_shooting - 1 > 0:
                             shooting_player.play()
-                            group_shooting_player.add(PlayerShooting(player.rect.midtop, lvl))
+                            group_shooting_player.add(PlayerShooting(player.rect.midtop))
                             delay_shooting = 0
                             count_shooting -= 1
                     else:
